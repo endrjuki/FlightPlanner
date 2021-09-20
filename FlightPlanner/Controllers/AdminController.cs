@@ -1,7 +1,11 @@
+using System;
+using System.Threading.Tasks;
+using FlightPlanner.Core.IConfiguration;
 using FlightPlanner.Models;
 using FlightPlanner.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace FlightPlanner.Controllers
 {
@@ -10,58 +14,57 @@ namespace FlightPlanner.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IFlightStorageService _flightStorageService;
+        private readonly ILogger<AdminController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AdminController(IFlightStorageService flightStorageService)
+
+        public AdminController(ILogger<AdminController> logger, IUnitOfWork unitOfWork)
         {
-            _flightStorageService = flightStorageService;
+            _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         [Route("flights/{id}")]
-        public IActionResult GetFlight(int id)
+        public async Task<IActionResult> GetFlight(Guid id)
         {
-            lock (_flightStorageService)
+            var flight = await _unitOfWork.Flights.GetById(id);
+
+            if (flight is null)
             {
-                var flight = _flightStorageService.GetById(id);
-                if (flight is null)
-                {
-                    return NotFound();
-                }
-                return Ok(flight);
+                return NotFound();
             }
+
+            return Ok(flight);
         }
 
         [HttpPut]
         [Route("flights")]
-        public IActionResult PutFlight(Flight flight)
+        public async Task<IActionResult> PutFlight(Flight flight)
         {
-            lock (_flightStorageService)
+            if (await _unitOfWork.Flights.Exists(flight))
             {
-                if (_flightStorageService.IsDuplicate(flight))
-                {
-                    return Conflict();
-                }
+                return Conflict();
+            }
 
-                if (!_flightStorageService.IsValid(flight) || !_flightStorageService.IsValidTimeframe(flight))
-                {
-                    return BadRequest();
-                }
+            if (flight.IsValid())
+            {
+                flight.Id = Guid.NewGuid();
+                await _unitOfWork.Flights.Add(flight);
+                await _unitOfWork.CompleteAsync();
 
-                _flightStorageService.AddFlight(flight);
                 return Created("", flight);
             }
+
+            return BadRequest();
         }
 
         [HttpDelete]
         [Route("flights/{id}")]
-        public IActionResult DeleteFlight(int id)
+        public IActionResult DeleteFlight(Guid id)
         {
-            lock (_flightStorageService)
-            {
-                _flightStorageService.DeleteFlight(id);
-                return Ok();
-            }
+            _unitOfWork.Flights.Delete(id);
+            return Ok();
         }
     }
 }

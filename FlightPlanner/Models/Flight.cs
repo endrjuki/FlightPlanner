@@ -4,7 +4,7 @@ namespace FlightPlanner.Models
 {
     public class Flight
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public Airport From { get; set; }
         public Airport To { get; set; }
         public string Carrier { get; set; }
@@ -20,15 +20,24 @@ namespace FlightPlanner.Models
                    !From.Equals(To) &&
                    !string.IsNullOrEmpty(Carrier) &&
                    !string.IsNullOrEmpty(DepartureTime) &&
-                   !string.IsNullOrEmpty(ArrivalTime);
+                   !string.IsNullOrEmpty(ArrivalTime) &&
+                   IsValidTimeFrame();
         }
         public bool Equals(Flight otherFlight)
         {
-            return this.Carrier.Equals(otherFlight.Carrier) &&
-                   this.From.Equals(otherFlight.From) &&
-                   this.To.Equals(otherFlight.To) &&
-                   this.DepartureTime.Equals(otherFlight.DepartureTime) &&
-                   this.ArrivalTime.Equals(otherFlight.ArrivalTime);
+            return Carrier.Equals(otherFlight.Carrier) &&
+                   From.Equals(otherFlight.From) &&
+                   To.Equals(otherFlight.To) &&
+                   DepartureTime.Equals(otherFlight.DepartureTime) &&
+                   ArrivalTime.Equals(otherFlight.ArrivalTime);
+        }
+
+        private bool IsValidTimeFrame()
+        {
+            var departureTime = DateTime.Parse(DepartureTime);
+            var arrivalTime = DateTime.Parse(ArrivalTime);
+
+            return departureTime < arrivalTime;
         }
     }
 }

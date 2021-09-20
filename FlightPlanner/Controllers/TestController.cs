@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FlightPlanner.Core.IConfiguration;
 using FlightPlanner.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,17 +14,17 @@ namespace FlightPlanner.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private readonly IFlightStorageService _flightStorageService;
-        public TestController(IFlightStorageService flightStorageService)
+        private readonly IUnitOfWork _unitOfWork;
+        public TestController(IUnitOfWork unitOfWork)
         {
-            _flightStorageService = flightStorageService;
+            _unitOfWork = unitOfWork;
         }
 
         [Route("clear")]
         [HttpPost]
-        public IActionResult Clear()
+        public async Task<IActionResult> Clear()
         {
-            _flightStorageService.ClearFlights();
+            await _unitOfWork.Flights.DeleteAllEntries("Flights");
             return Ok();
         }
     }

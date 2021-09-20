@@ -18,7 +18,8 @@ namespace FlightPlanner.Services
 
         public Flight GetById(int id)
         {
-            return _flights.SingleOrDefault(flight => flight.Id == id);
+            //return _flights.SingleOrDefault(flight => flight.Id == id);
+            return new Flight();
         }
 
         public Airport[] GetAirportByKeyword(string keyword)
@@ -40,7 +41,7 @@ namespace FlightPlanner.Services
 
         public Flight AddFlight(Flight flight)
         {
-            flight.Id = _flightId;
+            //flight.Id = _flightId;
             _flights.Add(flight);
             _flightId++;
             return flight;
