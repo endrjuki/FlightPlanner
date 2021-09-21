@@ -24,7 +24,7 @@ namespace FlightPlanner.Controllers
         [HttpPost]
         public async Task<IActionResult> Clear()
         {
-            await _unitOfWork.Flights.DeleteAllEntries("Flights");
+            await _unitOfWork.Flights.DeleteAllEntries();
             return Ok();
         }
     }

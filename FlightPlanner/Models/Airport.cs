@@ -7,16 +7,18 @@ namespace FlightPlanner.Models
     [ComplexType]
     public class Airport
     {
+        [JsonIgnore]
+        public int Id { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
-        [Key]
+
         [JsonPropertyName("airport")]
         public string AirportCode { get; set; }
 
         public bool Equals(Airport otherAirport)
         {
-            var originAirportCode = AirportCode.Replace(" ", "").ToLower();
-            var destinationAirportCode = otherAirport.AirportCode.Replace(" ", "").ToLower();
+            var originAirportCode = AirportCode.Trim().ToLower();
+            var destinationAirportCode = otherAirport.AirportCode.Trim().ToLower();
             return originAirportCode == destinationAirportCode;
         }
 

@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FlightPlanner.Core.IConfiguration;
 using FlightPlanner.Core.IRepositories;
 using FlightPlanner.Core.Repositories;
+using FlightPlanner.Models;
 using Microsoft.Extensions.Logging;
 
 namespace FlightPlanner.Data
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
+        private readonly SemaphoreSlim _lock= new SemaphoreSlim(1, 1);
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
@@ -20,6 +23,7 @@ namespace FlightPlanner.Data
             _logger = loggerFactory.CreateLogger("logs");
             Flights = new FlightRepository(_context, _logger);
         }
+
         public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();

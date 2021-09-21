@@ -14,10 +14,11 @@ namespace FlightPlanner.Core.Repositories
         protected DbSet<T> _dbSet;
         protected readonly ILogger _logger;
 
-        public GenericRepository(ApplicationDbContext context, ILogger logger)
+        public GenericRepository(ApplicationDbContext context, ILogger logger, DbSet<T> dbSet)
         {
             _context = context;
             _logger = logger;
+            _dbSet = dbSet;
         }
 
         public virtual async Task<IEnumerable<T>> All()
@@ -25,8 +26,9 @@ namespace FlightPlanner.Core.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public virtual async Task<T> GetById(Guid id)
+        public virtual async Task<T> GetById(int id)
         {
+
             return await _dbSet.FindAsync(id);
         }
 
@@ -36,7 +38,7 @@ namespace FlightPlanner.Core.Repositories
             return true;
         }
 
-        public virtual Task<bool> Delete(Guid id)
+        public virtual async Task<bool> Delete(int id)
         {
             throw new System.NotImplementedException();
         }
@@ -46,9 +48,11 @@ namespace FlightPlanner.Core.Repositories
             throw new System.NotImplementedException();
         }
 
-        public async Task DeleteAllEntries(string tableName)
+        public async Task DeleteAllEntries()
         {
-            await _context.Database.ExecuteSqlInterpolatedAsync($"delete from ${tableName}");
+            await _context.Database.BeginTransactionAsync();
+            await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE Flights");
+            await _context.Database.CommitTransactionAsync();
         }
     }
 }

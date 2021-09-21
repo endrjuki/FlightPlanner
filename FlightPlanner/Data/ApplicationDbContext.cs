@@ -7,11 +7,10 @@ namespace FlightPlanner.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public virtual DbSet<Flight> Flights { get; set; }
+        public DbSet<Flight> Flights { get; set; }
+        public DbSet<Airport> Airports { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
-        {
-
-        }
+        { }
     }
 }
