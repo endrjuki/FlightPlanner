@@ -19,7 +19,7 @@ namespace FlightPlanner.Controllers
         private readonly IUnitOfWork _unitOfWork;
         public CustomerController(ILogger<CustomerController> logger, IUnitOfWork unitOfWork)
         {
-            _logger = _logger;
+            _logger = logger;
             _unitOfWork = unitOfWork;
         }
 
