@@ -38,7 +38,6 @@ namespace FlightPlanner
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddControllers();
-            services.AddSingleton<IFlightStorageService, FlightStorageService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "FlightPlanner", Version = "v1"});

@@ -64,7 +64,7 @@ namespace FlightPlanner.Core.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{Repo} Exists method error", typeof(FlightRepository));
-                throw ex;
+                return true;
             }
 
         }
