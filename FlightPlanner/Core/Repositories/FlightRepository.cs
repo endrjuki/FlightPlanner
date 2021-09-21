@@ -54,8 +54,6 @@ namespace FlightPlanner.Core.Repositories
                         f.To.AirportCode == flight.To.AirportCode
                     );
 
-
-
                 if (existingFlight is null)
                     return false;
 
