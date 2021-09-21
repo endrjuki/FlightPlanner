@@ -11,7 +11,6 @@ namespace FlightPlanner.Data
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private readonly SemaphoreSlim _lock= new SemaphoreSlim(1, 1);
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 

@@ -14,8 +14,6 @@ namespace FlightPlanner.Core.Repositories
 {
     public class FlightRepository : GenericRepository<Flight>, IFlightRepository
     {
-        //private readonly SemaphoreSlim _lock= new SemaphoreSlim(1, 1);
-
         public FlightRepository(ApplicationDbContext context, ILogger logger)
             : base(context, logger, context.Flights)
         {
@@ -24,7 +22,6 @@ namespace FlightPlanner.Core.Repositories
 
         public override async Task<bool> Add(Flight flight)
         {
-            //await _lock.WaitAsync();
             try
             {
                 if (await Exists(flight))
@@ -40,11 +37,8 @@ namespace FlightPlanner.Core.Repositories
                 _logger.LogError(ex, "{Repo} Exists method error", typeof(FlightRepository));
                 return false;
             }
-            finally
-            {
-                //_lock.Release();
-            }
         }
+
         public async Task<bool> Exists(Flight flight)
         {
             try
@@ -106,7 +100,6 @@ namespace FlightPlanner.Core.Repositories
 
         public override async Task<bool> Delete(int id)
         {
-            //await _lock.WaitAsync();
             try
             {
                 var existingFlight = await _dbSet.Where(f => f.Id == id)
@@ -124,10 +117,6 @@ namespace FlightPlanner.Core.Repositories
             {
                 _logger.LogError(ex, "{Repo} Delete method error", typeof(FlightRepository));
                 return false;
-            }
-            finally
-            {
-                //_lock.Release();
             }
         }
 
